@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<title>Project Woodlands</title>
+<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/three.min.js"></script>
+<script src="assets/js/movement.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="assets/js/map.js"></script>
+</head>
+<body>
+<script>
+	// Config
+	var wireframe = false;
+	var stepSpeed = 0.5;
+	var turnDegrees = 0;
+	var turnSpeed = 0;
+	var directionZ = '';
+	var directionX = '';
+	var lookSpeed = 0;
+
+	var maps = getMap();
+
+	var scene = new THREE.Scene(); var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.05, 1000 );
+	var renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight ); document.body.appendChild( renderer.domElement );
+
+	var geometry = new THREE.BoxGeometry( 250, 1, 250 );
+	var material = new THREE.MeshBasicMaterial( { color: 0xeeeeee, wireframe: wireframe } );
+	var material = new THREE.MeshLambertMaterial( { color: 0xeeeeee } );
+	var floor = new THREE.Mesh( geometry, material );
+
+	var executed = false;
+	var r = renderMap( maps, executed );
+
+	scene.add( floor );
+	camera.position.z = 80;
+
+	floor.rotation.x = Math.PI;
+	floor.position.y = -5.5;
+
+	var movementZ = 0;
+	var movementX = 0;
+	var turn = '';
+	var timing = 0;
+
+	keyBindings();
+
+	// LIGHTS
+	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.2 );
+	hemiLight.position.set( 0, 100, 0 );
+	scene.add( hemiLight );
+
+	var light = new THREE.PointLight( 0xffffff, 1, 100 );
+	light.position.set( 50, 50, 50 );
+	scene.add( light );
+	var light = new THREE.PointLight( 0xffffff, 1, 100 );
+	light.position.set( 50, 50, 50 );
+	scene.add( light );
+	var light = new THREE.PointLight( 0xffffff, 1, 100 );
+	light.position.set( 50, 50, 50 );
+	scene.add( light );
+
+	var d = 250;
+
+	dirLight.shadowCameraFar = 35;
+	dirLight.shadowBias = -0.01;
+
+	function render() {
+		requestAnimationFrame( render );
+
+		renderer.render( scene, camera );
+
+		if(turn=='left') {camera.rotation.y = camera.rotation.y + (0.05*turnSpeed);}
+		if(turn=='right') {camera.rotation.y = camera.rotation.y - (0.05*turnSpeed);}
+
+		turnMath();
+		animateMovement();
+
+		for(var i = 0; i < r.length; i++) {
+			outOfBounds(r[i]);
+		}
+	}
+
+	render();
+
+	javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();stats.domElement.style.cssText='position:fixed;left:0;top:0;z-index:10000';document.body.appendChild(stats.domElement);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
+
+
+</script>
+
+</body>
+</html>
